@@ -168,7 +168,8 @@ cv::Mat preprocess_digit_region(const cv::Mat &region)
 	cv::Mat gray, resized, normalized;
 	cv::cvtColor(region, gray, cv::COLOR_BGR2GRAY);
 	cv::resize(gray, resized, cv::Size(28, 28), 0, 0, cv::INTER_LINEAR);
-	resized.convertTo(normalized, CV_32F, 1.0 / 255.0);
+	// resized.convertTo(normalized, CV_32F, 1.0 / 255.0);
+	resized.convertTo(normalized, CV_8U, 255.0);
 	return normalized;
 }
 
@@ -318,15 +319,15 @@ int run_inference(cv::Mat &frame)
 	}
 
 	// 进行NC1HWC2_int8_to_NCHW_int8转换
-	for (uint32_t i = 0; i < io_num.n_output; i++)
-	{
-		int channel = orig_output_attrs[i].dims[1];
-		int h = orig_output_attrs[i].n_dims > 2 ? orig_output_attrs[i].dims[2] : 1;
-		int w = orig_output_attrs[i].n_dims > 3 ? orig_output_attrs[i].dims[3] : 1;
-		int hw = h * w;
-		NC1HWC2_int8_to_NCHW_int8((int8_t *)output_mems[i]->virt_addr, (int8_t *)output_mems_nchw[i],
-								  (int *)output_attrs[i].dims, channel, h, w);
-	}
+	// for (uint32_t i = 0; i < io_num.n_output; i++)
+	// {
+	// 	int channel = orig_output_attrs[i].dims[1];
+	// 	int h = orig_output_attrs[i].n_dims > 2 ? orig_output_attrs[i].dims[2] : 1;
+	// 	int w = orig_output_attrs[i].n_dims > 3 ? orig_output_attrs[i].dims[3] : 1;
+	// 	int hw = h * w;
+	// 	NC1HWC2_int8_to_NCHW_int8((int8_t *)output_mems[i]->virt_addr, (int8_t *)output_mems_nchw[i],
+	// 							  (int *)output_attrs[i].dims, channel, h, w);
+	// }
 
 	// 获取预测的数字
 	int predicted_digit = get_predicted_digit((int8_t *)output_mems_nchw[0]);
