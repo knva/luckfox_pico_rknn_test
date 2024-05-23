@@ -12,7 +12,7 @@ set(CMAKE_C_COMPILER "${SDK_PATH}/tools/linux/toolchain/arm-rockchip830-linux-uc
 set(CMAKE_CXX_COMPILER "${SDK_PATH}/tools/linux/toolchain/arm-rockchip830-linux-uclibcgnueabihf/bin/arm-rockchip830-linux-uclibcgnueabihf-g++"
 )
 
-project(luckfox_rtsp_opencv)
+project(luckfox_rknn_test)
 
 
 link_directories(${CMAKE_CURRENT_SOURCE_DIR}/lib)
@@ -20,6 +20,7 @@ link_directories(${CMAKE_CURRENT_SOURCE_DIR}/lib)
 
 set(CMAKE_INSTALL_RPATH "$ORIGIN/lib")
 add_definitions(-DRV1106_1103)
+add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/ 3rdparty.out)
 
 
 set(OpenCV_DIR "${CMAKE_CURRENT_SOURCE_DIR}/lib/cmake/opencv4")
@@ -43,6 +44,7 @@ add_compile_options(-g -Wall
 set(CMAKE_EXE_LINKER_FLAGS  "${CMAKE_EXE_LINKER_FLAGS} -Wl,-rpath-link,${CMAKE_CURRENT_SOURCE_DIR}/lib:/usr/lib")
 
 target_link_libraries(${PROJECT_NAME}  
+                    ${LIBRKNNRT}
                     ${OpenCV_LIBS}
                     rockiva
                     sample_comm
@@ -65,6 +67,7 @@ target_include_directories(${PROJECT_NAME} PRIVATE
                            ${CMAKE_CURRENT_SOURCE_DIR}/common 
                            ${CMAKE_CURRENT_SOURCE_DIR}/common/isp3.x   
                            ${CMAKE_CURRENT_SOURCE_DIR}/include
+                           ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/rknpu2/include
                            ${CMAKE_CURRENT_SOURCE_DIR}/include/rkaiq
                            ${CMAKE_CURRENT_SOURCE_DIR}/include/rkaiq/uAPI2
                            ${CMAKE_CURRENT_SOURCE_DIR}/include/rkaiq/common
@@ -75,6 +78,6 @@ target_include_directories(${PROJECT_NAME} PRIVATE
                            ${CMAKE_CURRENT_SOURCE_DIR}/include/rkaiq/smartIr 
                           )
                     
-set(CMAKE_INSTALL_PREFIX "${CMAKE_CURRENT_SOURCE_DIR}/luckfox_rtsp_opencv_demo")
+set(CMAKE_INSTALL_PREFIX "${CMAKE_CURRENT_SOURCE_DIR}/luckfox_rknn_test")
+file(GLOB RKNN_FILES "${CMAKE_CURRENT_SOURCE_DIR}/../model/*.rknn")
 install(TARGETS ${PROJECT_NAME} DESTINATION ${CMAKE_INSTALL_PREFIX})
-                          
